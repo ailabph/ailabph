@@ -63,18 +63,30 @@ export async function onRequest(context) {
       });
     }
 
-    // 3. Check Origin header against ALLOWED_ORIGINS
-    const origin = request.headers.get('Origin');
+    // 3. Check Origin header against ALLOWED_ORIGINS (fail-closed for mutations)
     const allowedOrigins = env.ALLOWED_ORIGINS;
+    if (!allowedOrigins) {
+      console.error('ALLOWED_ORIGINS not configured');
+      return new Response(JSON.stringify({ error: 'Server configuration error' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    if (origin && allowedOrigins) {
-      const allowed = allowedOrigins.split(',').map(o => o.trim());
-      if (!allowed.includes(origin)) {
-        return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
-          status: 403,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
+    const origin = request.headers.get('Origin');
+    if (!origin) {
+      return new Response(JSON.stringify({ error: 'Origin header required' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const allowed = allowedOrigins.split(',').map(o => o.trim());
+    if (!allowed.includes(origin)) {
+      return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     // Store authenticated user in context for downstream handlers

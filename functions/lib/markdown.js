@@ -164,8 +164,16 @@ function processInline(text) {
   // Escape HTML first
   text = escapeHtml(text);
 
-  // Links: [text](url)
+  // Links: [text](url) — only allow safe URL schemes
   text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
+    // Allowlist URL schemes: https, http, mailto, and relative URLs (/ or #)
+    const trimmedUrl = url.trim();
+    const isRelative = trimmedUrl.startsWith('/') || trimmedUrl.startsWith('#');
+    const isSafeScheme = /^https?:/i.test(trimmedUrl) || /^mailto:/i.test(trimmedUrl);
+    if (!isRelative && !isSafeScheme) {
+      // Dangerous scheme (javascript:, data:, vbscript:, etc.) — output text only
+      return linkText;
+    }
     // Re-escape URL to prevent injection
     const safeUrl = url.replace(/"/g, '&quot;');
     return `<a href="${safeUrl}" rel="noopener noreferrer">${linkText}</a>`;

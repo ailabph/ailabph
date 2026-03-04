@@ -102,10 +102,31 @@ export async function verifyPassword(password, storedHash) {
       KEY_LENGTH * 8
     );
 
-    // Convert to base64 and compare
-    const actualHashB64 = btoa(String.fromCharCode(...new Uint8Array(derivedBits)));
+    // Constant-time comparison of derived keys
+    const actualBytes = new Uint8Array(derivedBits);
 
-    return actualHashB64 === expectedHashB64;
+    // Decode expected hash from base64 to Uint8Array
+    const expectedStr = atob(expectedHashB64);
+    const expectedBytes = new Uint8Array(expectedStr.length);
+    for (let i = 0; i < expectedStr.length; i++) {
+      expectedBytes[i] = expectedStr.charCodeAt(i);
+    }
+
+    // Length mismatch — still do a dummy comparison to avoid timing leak
+    if (actualBytes.length !== expectedBytes.length) {
+      let diff = 1;
+      for (let i = 0; i < actualBytes.length; i++) {
+        diff |= actualBytes[i] ^ 0;
+      }
+      return false;
+    }
+
+    // XOR all bytes and accumulate differences
+    let diff = 0;
+    for (let i = 0; i < actualBytes.length; i++) {
+      diff |= actualBytes[i] ^ expectedBytes[i];
+    }
+    return diff === 0;
   } catch (error) {
     console.error('Password verification error:', error);
     return false;

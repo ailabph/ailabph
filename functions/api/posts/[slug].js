@@ -94,7 +94,7 @@ export async function onRequestPut(context) {
     }
 
     // Validate status if provided
-    if (status && status !== 'draft' && status !== 'published') {
+    if (status !== undefined && status !== 'draft' && status !== 'published') {
       return new Response(JSON.stringify({ error: 'Invalid status. Must be draft or published' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -166,7 +166,7 @@ export async function onRequestPut(context) {
     }
 
     // Always update updated_at
-    updates.push("updated_at = datetime('now')");
+    updates.push("updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')");
 
     if (updates.length === 0) {
       // No updates, just return current post

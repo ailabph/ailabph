@@ -36,7 +36,7 @@ export async function onRequestGet(context) {
   try {
     const url = new URL(request.url);
     const showAll = url.searchParams.get('all') === '1';
-    const page = parseInt(url.searchParams.get('page') || '0', 10);
+    const page = Math.max(0, parseInt(url.searchParams.get('page')) || 0);
     const offset = page * POSTS_PER_PAGE;
 
     // Check auth if requesting all posts

@@ -801,8 +801,7 @@
                     const response = await fetch(url, {
                         method,
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Origin': window.location.origin
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(payload)
                     });
@@ -843,8 +842,7 @@
             async deletePost(slug) {
                 try {
                     const response = await fetch(`${API_BASE}/posts/${slug}`, {
-                        method: 'DELETE',
-                        headers: { 'Origin': window.location.origin }
+                        method: 'DELETE'
                     });
 
                     if (response.ok || response.status === 204) {
@@ -972,7 +970,13 @@
 
             processInline(text) {
                 text = this.escapeHtml(text);
-                text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" rel="noopener noreferrer">$1</a>');
+                text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
+                    const decoded = url.replace(/&amp;/g, '&');
+                    if (/^https?:/i.test(decoded) || /^mailto:/i.test(decoded) || /^[/#]/.test(decoded)) {
+                        return `<a href="${url}" rel="noopener noreferrer">${linkText}</a>`;
+                    }
+                    return linkText;
+                });
                 text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
                 text = text.replace(/__(.+?)__/g, '<strong>$1</strong>');
                 text = text.replace(/(?<![*_])\*([^*]+)\*(?![*_])/g, '<em>$1</em>');
@@ -999,6 +1003,7 @@
             formatDate(isoString) {
                 if (!isoString) return 'Never';
                 const date = new Date(isoString);
+                if (isNaN(date.getTime())) return 'Invalid date';
                 return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
             },
 

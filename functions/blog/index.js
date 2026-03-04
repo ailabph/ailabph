@@ -15,6 +15,7 @@ const POSTS_PER_PAGE = 20;
 function formatDate(isoString) {
   if (!isoString) return '';
   const date = new Date(isoString);
+  if (isNaN(date.getTime())) return '';
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -645,7 +646,7 @@ export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   const postSlug = url.searchParams.get('post');
-  const page = parseInt(url.searchParams.get('page') || '0', 10);
+  const page = Math.max(0, parseInt(url.searchParams.get('page'), 10) || 0);
 
   try {
     // Single post view
