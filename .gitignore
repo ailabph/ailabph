@@ -25,3 +25,11 @@ node_modules/
 dist/
 .env
 .env.local
+
+# Cloudflare
+.dev.vars
+.wrangler/
+
+# Plans and proposals
+.plans/
+PROPOSAL_blog*.md

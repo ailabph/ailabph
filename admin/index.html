@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — aiLab.ph Blog</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+    <style>
+        /* aiLab.ph Admin — Dark OLED Design */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --bg: #050505;
+            --bg-card: #0a0a0a;
+            --bg-card-hover: #0f0f0f;
+            --border: #161616;
+            --border-hover: #222222;
+            --text: #eeeeee;
+            --text-secondary: #808080;
+            --text-dim: #4a4a4a;
+            --accent: #00d4aa;
+            --accent-soft: rgba(0, 212, 170, 0.08);
+            --accent-bright: #33f0c8;
+            --error: #ff4444;
+            --warning: #ffaa00;
+            --success: #00d4aa;
+            --font: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', Menlo, Consolas, monospace;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--black);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* Film grain */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Login Screen */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 400px;
+            padding: 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .login-box h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent-bright) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-box p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 300px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: var(--black);
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--accent-bright);
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        button.secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+        }
+
+        button.danger {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 1.5rem 2rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Posts List */
+        .posts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .posts-table {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .posts-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .posts-table th,
+        .posts-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+        }
+
+        .posts-table th {
+            background: var(--bg);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .posts-table td {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .posts-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .posts-table tr:hover {
+            background: var(--bg);
+        }
+
+        .post-title {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .post-slug {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge.draft {
+            background: rgba(255, 170, 0, 0.15);
+            color: var(--warning);
+        }
+
+        .status-badge.published {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .post-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: var(--bg-card-hover);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Editor */
+        .editor {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: calc(100vh - 180px);
+        }
+
+        .editor-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .preview-panel h3 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .preview-content {
+            color: var(--text);
+            line-height: 1.8;
+        }
+
+        .preview-content h1,
+        .preview-content h2,
+        .preview-content h3,
+        .preview-content h4 {
+            margin: 2rem 0 1rem;
+            font-weight: 700;
+        }
+
+        .preview-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-content code {
+            background: var(--bg);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--accent-bright);
+        }
+
+        .preview-content pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        .preview-content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text);
+        }
+
+        .preview-content ul,
+        .preview-content ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .preview-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-content blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .preview-content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .preview-content a:hover {
+            text-decoration: underline;
+        }
+
+        .preview-content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .modal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.error {
+            border-color: var(--error);
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast-message {
+            font-weight: 500;
+        }
+
+        .toast.error .toast-message {
+            color: var(--error);
+        }
+
+        .toast.success .toast-message {
+            color: var(--success);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .editor {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .posts-table {
+                overflow-x: auto;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h1>Admin Login</h1>
+            <p>aiLab.ph Blog Management</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard hidden">
+        <div class="header">
+            <h1>Blog Admin</h1>
+            <div class="header-actions">
+                <button onclick="app.showEditor()">+ New Post</button>
+                <button class="secondary" onclick="app.logout()">Logout</button>
+            </div>
+        </div>
+        <div class="main-content">
+            <div id="postsList"></div>
+            <div id="editorView" class="hidden"></div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        const API_BASE = '/api';
+
+        const app = {
+            user: null,
+            posts: [],
+            currentPost: null,
+
+            async init() {
+                try {
+                    const response = await fetch(`${API_BASE}/auth/me`);
+                    if (response.ok) {
+                        this.user = await response.json();
+                        this.showDashboard();
+                        await this.loadPosts();
+                    } else {
+                        this.showLogin();
+                    }
+                } catch (error) {
+                    console.error('Init error:', error);
+                    this.showLogin();
+                }
+            },
+
+            showLogin() {
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('hidden');
+            },
+
+            showDashboard() {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+            },
+
+            async login(username, password) {
+                try {
+                    const response = await fetch(`${API_BASE}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    if (response.ok) {
+                        this.user = { username };
+                        this.showDashboard();
+                        await this.loadPosts();
+                    } else {
+                        const data = await response.json();
+                        this.showToast(data.error || 'Login failed', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error', 'error');
+                }
+            },
+
+            async logout() {
+                try {
+                    await fetch(`${API_BASE}/auth/logout`, { method: 'POST' });
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+                this.user = null;
+                this.showLogin();
+            },
+
+            async loadPosts() {
+                try {
+                    const response = await fetch(`${API_BASE}/posts?all=1`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.posts = data.posts;
+                        this.renderPostsList();
+                    } else if (response.status === 401) {
+                        this.showToast('Session expired', 'error');
+                        this.showLogin();
+                    }
+                } catch (error) {
+                    this.showToast('Failed to load posts', 'error');
+                }
+            },
+
+            renderPostsList() {
+                const container = document.getElementById('postsList');
+                document.getElementById('editorView').classList.add('hidden');
+                container.classList.remove('hidden');
+
+                if (this.posts.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 4rem; color: var(--text-secondary);">No posts yet. Create your first post!</p>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="posts-header">
+                        <h2>All Posts</h2>
+                    </div>
+                    <div class="posts-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${this.posts.map(post => `
+                                    <tr>
+                                        <td>
+                                            <div class="post-title">${this.escapeHtml(post.title)}</div>
+                                            <div class="post-slug">${this.escapeHtml(post.slug)}</div>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge ${post.status}">${post.status}</span>
+                                        </td>
+                                        <td class="post-date">${this.formatDate(post.updated_at)}</td>
+                                        <td>
+                                            <div class="post-actions">
+                                                <button class="btn-icon" onclick="app.editPost('${post.slug}')" title="Edit">Edit</button>
+                                                <button class="btn-icon" onclick="app.confirmDelete('${post.slug}')" title="Delete">Delete</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            },
+
+            showEditor(post = null) {
+                this.currentPost = post;
+                const container = document.getElementById('editorView');
+                const listContainer = document.getElementById('postsList');
+
+                listContainer.classList.add('hidden');
+                container.classList.remove('hidden');
+
+                const isEdit = post !== null;
+                const title = isEdit ? post.title : '';
+                const slug = isEdit ? post.slug : '';
+                const excerpt = isEdit ? (post.excerpt || '') : '';
+                const bodyMd = isEdit ? post.body_md : '';
+                const status = isEdit ? post.status : 'draft';
+
+                container.innerHTML = `
+                    <div class="editor-toolbar">
+                        <button class="secondary" onclick="app.cancelEdit()">← Back</button>
+                        <button onclick="app.savePost()">${isEdit ? 'Update' : 'Create'} Post</button>
+                    </div>
+                    <div class="editor">
+                        <div class="editor-panel">
+                            <div class="form-group">
+                                <label for="postTitle">Title</label>
+                                <input type="text" id="postTitle" value="${this.escapeHtml(title)}" oninput="app.updateSlug()">
+                            </div>
+                            <div class="form-group">
+                                <label for="postSlug">Slug</label>
+                                <input type="text" id="postSlug" value="${this.escapeHtml(slug)}">
+                            </div>
+                            <div class="form-group">
+                                <label for="postExcerpt">Excerpt (optional)</label>
+                                <input type="text" id="postExcerpt" value="${this.escapeHtml(excerpt)}">
+                            </div>
+                            <div class="form-group">
+                                <label for="postBody">Body (Markdown)</label>
+                                <textarea id="postBody" oninput="app.updatePreview()">${this.escapeHtml(bodyMd)}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="postStatus" ${status === 'published' ? 'checked' : ''}>
+                                    Publish
+                                </label>
+                            </div>
+                        </div>
+                        <div class="preview-panel">
+                            <h3>Preview</h3>
+                            <div id="preview" class="preview-content"></div>
+                        </div>
+                    </div>
+                `;
+
+                this.updatePreview();
+            },
+
+            async editPost(slug) {
+                try {
+                    const response = await fetch(`${API_BASE}/posts/${slug}`);
+                    if (response.ok) {
+                        const post = await response.json();
+                        this.showEditor(post);
+                    } else if (response.status === 401) {
+                        this.showToast('Session expired', 'error');
+                        this.showLogin();
+                    } else {
+                        this.showToast('Failed to load post', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error', 'error');
+                }
+            },
+
+            cancelEdit() {
+                this.currentPost = null;
+                this.renderPostsList();
+            },
+
+            async savePost() {
+                const title = document.getElementById('postTitle').value.trim();
+                const slug = document.getElementById('postSlug').value.trim();
+                const excerpt = document.getElementById('postExcerpt').value.trim();
+                const bodyMd = document.getElementById('postBody').value;
+                const status = document.getElementById('postStatus').checked ? 'published' : 'draft';
+
+                if (!title || !bodyMd) {
+                    this.showToast('Title and body are required', 'error');
+                    return;
+                }
+
+                const isEdit = this.currentPost !== null;
+                const url = isEdit ? `${API_BASE}/posts/${this.currentPost.slug}` : `${API_BASE}/posts`;
+                const method = isEdit ? 'PUT' : 'POST';
+
+                const payload = { title, body_md: bodyMd, status };
+                if (slug) payload.slug = slug;
+                if (excerpt) payload.excerpt = excerpt;
+
+                try {
+                    const response = await fetch(url, {
+                        method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Origin': window.location.origin
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        this.showToast(isEdit ? 'Post updated' : 'Post created', 'success');
+                        await this.loadPosts();
+                    } else if (response.status === 409) {
+                        const data = await response.json();
+                        this.showToast(data.error || 'Slug already exists', 'error');
+                    } else if (response.status === 401) {
+                        this.showToast('Session expired', 'error');
+                        this.showLogin();
+                    } else {
+                        this.showToast('Failed to save post', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error', 'error');
+                }
+            },
+
+            confirmDelete(slug) {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal">
+                        <h2>Delete Post?</h2>
+                        <p>This action cannot be undone.</p>
+                        <div class="modal-actions">
+                            <button class="secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                            <button class="danger" onclick="app.deletePost('${slug}'); this.closest('.modal-overlay').remove()">Delete</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            },
+
+            async deletePost(slug) {
+                try {
+                    const response = await fetch(`${API_BASE}/posts/${slug}`, {
+                        method: 'DELETE',
+                        headers: { 'Origin': window.location.origin }
+                    });
+
+                    if (response.ok || response.status === 204) {
+                        this.showToast('Post deleted', 'success');
+                        await this.loadPosts();
+                    } else if (response.status === 401) {
+                        this.showToast('Session expired', 'error');
+                        this.showLogin();
+                    } else {
+                        this.showToast('Failed to delete post', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Network error', 'error');
+                }
+            },
+
+            updateSlug() {
+                if (this.currentPost) return; // Don't auto-update slug when editing
+                const title = document.getElementById('postTitle').value;
+                const slug = this.slugify(title);
+                document.getElementById('postSlug').value = slug;
+            },
+
+            updatePreview() {
+                const bodyMd = document.getElementById('postBody').value;
+                const preview = document.getElementById('preview');
+                preview.innerHTML = this.renderMarkdown(bodyMd);
+            },
+
+            // Markdown renderer (client-side preview only, matches server logic)
+            renderMarkdown(markdown) {
+                if (!markdown) return '';
+
+                const lines = markdown.split('\n');
+                const html = [];
+                let inCodeBlock = false;
+                let codeBlockContent = [];
+                let inList = null;
+                let listItems = [];
+
+                const closeList = () => {
+                    if (inList) {
+                        html.push(`<${inList}>${listItems.join('')}</${inList}>`);
+                        inList = null;
+                        listItems = [];
+                    }
+                };
+
+                for (let line of lines) {
+                    if (line.trim().startsWith('```')) {
+                        if (inCodeBlock) {
+                            html.push(`<pre><code>${this.escapeHtml(codeBlockContent.join('\n'))}</code></pre>`);
+                            codeBlockContent = [];
+                            inCodeBlock = false;
+                        } else {
+                            closeList();
+                            inCodeBlock = true;
+                        }
+                        continue;
+                    }
+
+                    if (inCodeBlock) {
+                        codeBlockContent.push(line);
+                        continue;
+                    }
+
+                    if (line.trim() === '') {
+                        closeList();
+                        continue;
+                    }
+
+                    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+                    if (headingMatch) {
+                        closeList();
+                        const level = headingMatch[1].length;
+                        const text = this.processInline(headingMatch[2]);
+                        html.push(`<h${level}>${text}</h${level}>`);
+                        continue;
+                    }
+
+                    if (line.match(/^(\*{3,}|-{3,}|_{3,})$/)) {
+                        closeList();
+                        html.push('<hr>');
+                        continue;
+                    }
+
+                    const ulMatch = line.match(/^[-*+]\s+(.+)$/);
+                    if (ulMatch) {
+                        if (inList !== 'ul') {
+                            closeList();
+                            inList = 'ul';
+                        }
+                        listItems.push(`<li>${this.processInline(ulMatch[1])}</li>`);
+                        continue;
+                    }
+
+                    const olMatch = line.match(/^\d+\.\s+(.+)$/);
+                    if (olMatch) {
+                        if (inList !== 'ol') {
+                            closeList();
+                            inList = 'ol';
+                        }
+                        listItems.push(`<li>${this.processInline(olMatch[1])}</li>`);
+                        continue;
+                    }
+
+                    const quoteMatch = line.match(/^>\s+(.+)$/);
+                    if (quoteMatch) {
+                        closeList();
+                        html.push(`<blockquote>${this.processInline(quoteMatch[1])}</blockquote>`);
+                        continue;
+                    }
+
+                    closeList();
+                    html.push(`<p>${this.processInline(line)}</p>`);
+                }
+
+                if (inCodeBlock) {
+                    html.push(`<pre><code>${this.escapeHtml(codeBlockContent.join('\n'))}</code></pre>`);
+                }
+                closeList();
+
+                return html.join('');
+            },
+
+            processInline(text) {
+                text = this.escapeHtml(text);
+                text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" rel="noopener noreferrer">$1</a>');
+                text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                text = text.replace(/__(.+?)__/g, '<strong>$1</strong>');
+                text = text.replace(/(?<![*_])\*([^*]+)\*(?![*_])/g, '<em>$1</em>');
+                text = text.replace(/(?<![*_])_([^_]+)_(?![*_])/g, '<em>$1</em>');
+                text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+                return text;
+            },
+
+            slugify(text) {
+                return text
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-+|-+$/g, '')
+                    .substring(0, 100);
+            },
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+
+            formatDate(isoString) {
+                if (!isoString) return 'Never';
+                const date = new Date(isoString);
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            },
+
+            showToast(message, type = 'error') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `<div class="toast-message">${this.escapeHtml(message)}</div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            }
+        };
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            await app.login(username, password);
+        });
+
+        // Expose app globally
+        window.app = app;
+
+        // Initialize
+        app.init();
+    })();
+    </script>
+</body>
+</html>
