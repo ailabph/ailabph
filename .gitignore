@@ -33,3 +33,4 @@ dist/
 # Plans and proposals
 .plans/
 PROPOSAL_blog*.md
+CLAUDE_*
