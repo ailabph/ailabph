@@ -649,6 +649,141 @@
         }
 
         /* ══════════════════════════
+           CASE STUDIES
+           ══════════════════════════ */
+        .case-studies-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+            margin-top: 4rem;
+        }
+
+        .case-card {
+            padding: 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.4s ease, transform 0.4s var(--ease-out), box-shadow 0.4s ease;
+        }
+
+        .case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent), transparent);
+            opacity: 0.4;
+            transition: opacity 0.4s ease;
+        }
+
+        .case-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-hover);
+        }
+
+        .case-card:hover::before {
+            opacity: 1;
+        }
+
+        .case-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .case-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .case-badge {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: var(--accent);
+            padding: 0.3rem 0.7rem;
+            background: var(--accent-soft);
+            border: 1px solid rgba(0, 212, 170, 0.15);
+            border-radius: 100px;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+
+        .case-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .case-metrics {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .case-metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .case-metric-value {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .case-metric-label {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            margin-top: 0.3rem;
+            letter-spacing: 0.01em;
+        }
+
+        .case-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 1.25rem;
+        }
+
+        .case-tech span {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            padding: 0.2rem 0.55rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 900px) {
+            .case-studies-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .case-card { padding: 1.75rem; }
+            .case-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .case-metrics { flex-wrap: wrap; }
+        }
+
+        /* ══════════════════════════
            APPROACH
            ══════════════════════════ */
         .approach-list {
@@ -885,6 +1020,7 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="#work">Work</a></li>
                 <li><a href="#track-record">Record</a></li>
+                <li><a href="#case-studies">Cases</a></li>
                 <li><a href="#approach">Approach</a></li>
                 <li><a href="/blog/">Blog</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -978,6 +1114,16 @@
                     <h3>Full-Stack Applications</h3>
                     <p>End-to-end web applications built with modern tooling. APIs, databases, frontends, infrastructure &mdash; the whole thing, done properly.</p>
                 </div>
+                <div class="build-item reveal-stagger">
+                    <span class="build-icon">/p2p</span>
+                    <h3>P2P Trading Platforms</h3>
+                    <p>Complete peer-to-peer trading systems comparable to Binance P2P. Escrow mechanisms, KYC integration, dispute resolution, and multi-currency support. Built for trust at scale.</p>
+                </div>
+                <div class="build-item reveal-stagger">
+                    <span class="build-icon">/indexer</span>
+                    <h3>Blockchain Indexing</h3>
+                    <p>Custom blockchain indexers for real-time on-chain data. DEX monitoring, price tracking, transaction parsing, and wallet analytics. We built indexing systems before DEX Screener existed.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1000,10 +1146,10 @@
                     <p class="name">Danny Rivera</p>
                     <p class="role">Founder &amp; CTO</p>
                     <p>
-                        Currently serving as CTO at Coinsher &mdash; a cryptocurrency exchange built from the ground up. Every layer of the stack: trading engine, wallet systems, compliance tooling, user-facing applications.
+                        Currently serving as CTO at Coinsher &mdash; a cryptocurrency exchange built from the ground up in 3 months. Every layer of the stack: trading engine, wallet systems, compliance tooling, user-facing applications. Then built a full P2P trading platform in 6 months &mdash; escrow, KYC, dispute resolution &mdash; comparable to Binance P2P.
                     </p>
                     <p style="margin-top: 1rem;">
-                        8+ years building production systems across fintech, security, and enterprise software. The kind of engineering where bugs have dollar signs attached to them.
+                        8+ years building production systems across fintech, blockchain, and security-critical software. Built custom blockchain indexers for on-chain analytics before tools like DEX Screener existed. The kind of engineering where bugs have dollar signs attached to them.
                     </p>
                 </div>
 
@@ -1019,6 +1165,85 @@
                     <div class="stat-item reveal-stagger">
                         <div class="stat-value">Coinsher</div>
                         <div class="stat-label">Flagship product &mdash; built from zero</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Case Studies -->
+    <section id="case-studies">
+        <div class="container">
+            <div class="reveal">
+                <p class="section-label">Case Studies</p>
+                <h2 class="section-heading">Shipped. Running.<br>Battle-tested.</h2>
+                <p class="section-text">
+                    Not hypotheticals. These are production systems handling real transactions and real users.
+                </p>
+            </div>
+
+            <div class="case-studies-grid">
+                <div class="case-card reveal-stagger">
+                    <div class="case-card-header">
+                        <h3>Coinsher Exchange &amp; P2P</h3>
+                        <span class="case-badge">Fintech / Crypto</span>
+                    </div>
+                    <p>
+                        Full cryptocurrency exchange built from zero &mdash; trading engine, wallet infrastructure, KYC/AML compliance, and admin tooling. Followed by a complete P2P trading platform with escrow, dispute resolution, and multi-currency support. Binance P2P&ndash;comparable functionality, built by a fraction of the team.
+                    </p>
+                    <div class="case-metrics">
+                        <div class="case-metric">
+                            <span class="case-metric-value">3 mo</span>
+                            <span class="case-metric-label">Exchange built</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="case-metric-value">6 mo</span>
+                            <span class="case-metric-label">P2P platform shipped</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="case-metric-value">Full stack</span>
+                            <span class="case-metric-label">Every layer, from scratch</span>
+                        </div>
+                    </div>
+                    <div class="case-tech">
+                        <span>Order matching</span>
+                        <span>Wallet infra</span>
+                        <span>Escrow</span>
+                        <span>KYC/AML</span>
+                        <span>Dispute resolution</span>
+                    </div>
+                </div>
+
+                <div class="case-card reveal-stagger">
+                    <div class="case-card-header">
+                        <h3>SRT Revolution (2022)</h3>
+                        <span class="case-badge">Blockchain / BSC</span>
+                    </div>
+                    <p>
+                        On-chain referral tracking system on Binance Smart Chain with a custom blockchain indexer for real-time transaction parsing, DEX monitoring, and price tracking. Built before tools like DEX Screener existed &mdash; we wrote the indexing infrastructure from scratch.
+                    </p>
+                    <div class="case-metrics">
+                        <div class="case-metric">
+                            <span class="case-metric-value">2022</span>
+                            <span class="case-metric-label">Shipped on BSC</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="case-metric-value">Custom</span>
+                            <span class="case-metric-label">Blockchain indexer</span>
+                        </div>
+                        <div class="case-metric">
+                            <span class="case-metric-value">Pre-Screener</span>
+                            <span class="case-metric-label">Before DEX Screener era</span>
+                        </div>
+                    </div>
+                    <div class="case-tech">
+                        <span>BSC indexer</span>
+                        <span>DEX monitoring</span>
+                        <span>Price tracking</span>
+                        <span>On-chain referrals</span>
+                        <span>Tx parsing</span>
                     </div>
                 </div>
             </div>
